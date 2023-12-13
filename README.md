@@ -3,6 +3,7 @@ Single Header Testing Framework
 
 Just drop it inside your project and you're ready to go.
 Easy to use and implement, useful on small projects when you don't want dependency to huge testing frameworks.
+They already exists single header testing framework, but this is my own, and it's similar to how unreal engine implements tests.
 
 # Logging to a file
 When launching the executable you can pass a filename that will be used a log (the path must exist)
@@ -11,7 +12,7 @@ When launching the executable you can pass a filename that will be used a log (t
 # Usage
 
 With macros
-```
+```cpp
 // Test class definition
 // example file: myclass.test.cpp
 
@@ -38,7 +39,7 @@ With macros
 ```
 
 Without macros
-```
+```cpp
 // Test class definition
 // example file: myclass.test.cpp
   class MyTestClass final : public Fox::AutomatedTestInstance {

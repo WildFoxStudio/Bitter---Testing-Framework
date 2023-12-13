@@ -70,6 +70,7 @@
 #pragma once
 
 #include <algorithm>
+#include <cassert>
 #include <fstream>
 #include <functional>
 #include <iomanip>
@@ -79,8 +80,6 @@
 #include <sstream>
 #include <string>
 #include <vector>
-
-#include "glm/gtx/string_cast.hpp"
 
 #define TEXT_RED "\033[31m"
 #define TEXT_GREEN "\033[32m"
@@ -92,7 +91,13 @@ namespace Fox
 inline bool
 __floatsAlmostSame(float a, float b, float epsilon = std::numeric_limits<float>().epsilon())
 {
-    return (glm::abs(a - b) < epsilon);
+    return (std::fabs(a - b) < epsilon);
+}
+
+inline bool
+__doublesAlmostSame(double a, double b, double epsilon = std::numeric_limits<double>().epsilon())
+{
+    return (std::abs(a - b) < epsilon);
 }
 
 /*Defines the current status of a given test case*/
@@ -146,7 +151,30 @@ class AutomatedTestInstance
             {
                 _failed = true;
             }
-        return expression;
+        return !expression;
+    };
+
+    /*Compare two values and return true if they are equal, if not the test will fail*/
+    bool TestEqual(char value, char expected)
+    {
+        if (!(value == expected))
+            {
+                _failed = true;
+                assert(false);
+                return false;
+            }
+        return true;
+    };
+
+    bool TestEqual(unsigned char value, unsigned char expected)
+    {
+        if (!(value == expected))
+            {
+                _failed = true;
+                assert(false);
+                return false;
+            }
+        return true;
     };
 
     /*Compare two values and return true if they are equal, if not the test will fail*/
@@ -154,8 +182,6 @@ class AutomatedTestInstance
     {
         if (!(value == expected))
             {
-                std::cerr << "In:" << GetTestNames()[GetCurrentRunningTest()] << TEXT_RED << ENDLINE << "Expected value to be " << expected << " but it was " << value << ENDLINE << ENDLINE;
-
                 _failed = true;
                 assert(false);
                 return false;
@@ -168,6 +194,18 @@ class AutomatedTestInstance
     {
         if (!(value == expected))
             {
+                _failed = true;
+                assert(false);
+                return false;
+            }
+        return true;
+    };
+
+    /*Compare two values and return true if they are equal, if not the test will fail*/
+    bool TestEqual(float value, float expected)
+    {
+        if (!__floatsAlmostSame(value, expected))
+            {
                 std::cerr << "In:" << GetTestNames()[GetCurrentRunningTest()] << TEXT_RED << ENDLINE << "Expected value to be " << expected << " but it was " << value << ENDLINE << ENDLINE;
 
                 _failed = true;
@@ -178,7 +216,7 @@ class AutomatedTestInstance
     };
 
     /*Compare two values and return true if they are equal, if not the test will fail*/
-    bool TestEqual(float value, float expected)
+    bool TestEqual(double value, double expected)
     {
         if (!__floatsAlmostSame(value, expected))
             {
@@ -207,8 +245,15 @@ class AutomatedTestInstance
         auto found = std::find_if(_tests.begin(), _tests.end(), [name](const DTestCase& test) { return test.Name == name; });
         assert(found != _tests.end());
         _currentRunningTest = static_cast<signed int>(std::distance(_tests.begin(), found));
-        found->DoWork();
-        _testStatus[_currentRunningTest] = _failed ? ETestStatus::FAILED : ETestStatus::PASSED;
+        try
+            {
+                found->DoWork();
+                _testStatus[_currentRunningTest] = _failed ? ETestStatus::FAILED : ETestStatus::PASSED;
+            }
+        catch (...)
+            {
+                _testStatus[_currentRunningTest] = ETestStatus::FAILED;
+            }
         return !_failed;
     }
 
@@ -220,7 +265,13 @@ class AutomatedTestInstance
             {
                 ResetFlags();
                 const auto& test = _tests[i];
-                passed += static_cast<unsigned int>(RunTest(test.Name));
+                try
+                    {
+                        passed += static_cast<unsigned int>(RunTest(test.Name));
+                    }
+                catch (...)
+                    {
+                    }
             }
 
         return (passed == _tests.size());
@@ -248,8 +299,15 @@ class AutomatedTestInstance
         // check that does not exists with same name
         assert(std::find_if(_tests.begin(), _tests.end(), [name](const DTestCase& test) { return test.Name == name; }) == _tests.end());
         assert(_tests.size() < std::numeric_limits<signed int>().max());
-        _tests.push_back(DTestCase(name, std::move(testFunc)));
-        _testStatus.push_back(ETestStatus::NOT_TESTED);
+        try
+            {
+                _tests.push_back(DTestCase(name, std::move(testFunc)));
+                _testStatus.push_back(ETestStatus::NOT_TESTED);
+            }
+        catch (...)
+            {
+                assert(0); // Failed to allocate test case
+            }
     };
 
     /*Returns the index of the current running test. Returns -1 if no tests are running*/
@@ -444,8 +502,25 @@ class TestInserter
             } \
     }
 
-#define TEST_EQUAL(a, b) (TestEqualAtLine((a), (b), Fox::SMALLFLOAT, (__FILE__), (__LINE__)))
-#define TEST_NEQUAL(a, b) (!TestEqualAtLine((a), (b), Fox::SMALLFLOAT, (__FILE__), (__LINE__)))
+#define TEST_EQUAL(a, b) \
+    { \
+if (!TestEqual((a), (b))\
+        {\
+                std::cerr << "In:" << GetTestNames()[GetCurrentRunningTest()] << "[line " << __LINE__ << "]" \
+                          << " TEST_EQUAL(" << #a << "," << #b << ")" \
+                          << " was expected to be equal but they are not" << ENDLINE; \
+        } \
+    }
+
+#define TEST_NEQUAL(a, b) \
+    { \
+if (TestEqual((a), (b))\
+        {\
+                std::cerr << "In:" << GetTestNames()[GetCurrentRunningTest()] << "[line " << __LINE__ << "]" \
+                          << " TEST_NEQUAL(" << #a << "," << #b << ")" \
+                          << " was expected to be different but they are the same" << ENDLINE; \
+        } \
+    }
 
 // Returns 0  when all tests succed or 1 when at least one test has failed
 #define RUN_ALL_TESTS(argc, argv) return !Fox::AutomationTester::GetInstance().RunAllTests(argc, argv);
