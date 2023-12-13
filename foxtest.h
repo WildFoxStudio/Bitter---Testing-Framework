@@ -35,7 +35,7 @@
 
 // example file: main.test.cpp
 //
-//  #include "stf.h"
+//  #include "foxtest.h"
 //  int main(int argc, char* argv[])
 //  {
 //      RUN_ALL_TESTS(argc, argv);
@@ -67,7 +67,7 @@
 
 // example file: main.test.cpp
 //
-//  #include "stf.h"
+//  #include "foxtest.h"
 //
 //  int main(int argc, char* argv[]) {
 //     Fox::AutomationTester engineTester;

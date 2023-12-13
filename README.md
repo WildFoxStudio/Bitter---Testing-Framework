@@ -1,9 +1,11 @@
-# STF
+# Fox Test
 Single Header Testing Framework
+
+![Alt text](image.png)
 
 Just drop it inside your project and you're ready to go.
 Easy to use and implement, useful on small projects when you don't want dependency to huge testing frameworks.
-They already exists single header testing framework, but this is my own, and it's similar to how unreal engine implements
+They already many exists single header testing framework, but this is my own, and it's similar to how unreal engine implements automation testing.
 
 # Logging to a file
 When launching the executable you can pass a filename that will be used a log (the path must exist)
@@ -31,7 +33,7 @@ With macros
   }
 
 // example file: main.test.cpp
-  #include "stf.h"
+  #include "foxtest.h"
   int main(int argc, char* argv[])
   {
       RUN_ALL_TESTS(argc, argv);
@@ -64,7 +66,7 @@ Without macros
 
 // example file: main.test.cpp
 
-  #include "stf.h"
+  #include "foxtest.h"
 
   int main(int argc, char* argv[]) {
      Fox::AutomationTester engineTester;
