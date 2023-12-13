@@ -35,7 +35,7 @@
 
 // example file: main.test.cpp
 //
-//  #include "foxtest.h"
+//  #include "bitter.h"
 //  int main(int argc, char* argv[])
 //  {
 //      RUN_ALL_TESTS(argc, argv);
@@ -45,7 +45,7 @@
 
 // Test class definition
 // example file: myclass.test.cpp
-//  class MyTestClass final : public Fox::AutomatedTestInstance {
+//  class MyTestClass final : public bitterAutomatedTestInstance {
 //     public:
 //          virtual void Define() override;
 //     protected:
@@ -54,7 +54,7 @@
 //  };
 //
 //  //Register class statically or add it manually in the main.test.cpp but not both
-//  static Fox::TestInserter<MyTestClass> RegisterMyTestClass("MyTestClass");
+//  static bitterTestInserter<MyTestClass> RegisterMyTestClass("MyTestClass");
 //
 //  void MyTestClass::Define()
 //  {
@@ -67,10 +67,10 @@
 
 // example file: main.test.cpp
 //
-//  #include "foxtest.h"
+//  #include "bitter.h"
 //
 //  int main(int argc, char* argv[]) {
-//     Fox::AutomationTester engineTester;
+//     bitterAutomationTester engineTester;
 //     engineTester.AddTest<MyTestClass>("MyTestClass");
 //     engineTester.AddTest<MyOtherTestClass>("MyOtherTestClass");
 //
@@ -99,7 +99,7 @@
 #define TEXT_WHITE "\033[37m"
 #define ENDLINE static_cast<char>(0x0a)
 
-namespace Fox
+namespace bitter
 {
 	inline bool
 		__floatsAlmostSame(float a, float b, float epsilon = std::numeric_limits<float>().epsilon())
@@ -459,12 +459,12 @@ namespace Fox
 	class TestInserter
 	{
 	public:
-		TestInserter(const std::string& className) { Fox::AutomationTester::GetInstance().AddTest<T>(className); };
+		TestInserter(const std::string& className) { bitterAutomationTester::GetInstance().AddTest<T>(className); };
 	};
 
 } // namespace Fox
 
-#define ADD_TEST(testClass) static Fox::TestInserter<testClass> __testInserted##testClass(#testClass);
+#define ADD_TEST(testClass) static bitterTestInserter<testClass> __testInserted##testClass(#testClass);
 
 #define TEST_DEFINE_CLASS(className) \
     class className final : public AutomatedTestInstance \
@@ -475,7 +475,7 @@ namespace Fox
 #define TEST_END_CLASS(className) \
     } \
     ; \
-    static Fox::TestInserter<className> __testInserted##className(#className);
+    static bitterTestInserter<className> __testInserted##className(#className);
 
 #define TEST_TRUE_OR_QUIT(expression) \
     { \
@@ -529,4 +529,4 @@ if (TestEqual((a), (b)))\
     }
 
 // Returns 0  when all tests succed or 1 when at least one test has failed
-#define RUN_ALL_TESTS(argc, argv) return !Fox::AutomationTester::GetInstance().RunAllTests(argc, argv);
+#define RUN_ALL_TESTS(argc, argv) return !bitterAutomationTester::GetInstance().RunAllTests(argc, argv);

@@ -1,4 +1,4 @@
-# Fox Test
+# Bitter
 Single Header Testing Framework
 
 ![Alt text](image.png)
@@ -33,7 +33,7 @@ With macros
   }
 
 // example file: main.test.cpp
-  #include "foxtest.h"
+  #include "bitter.h"
   int main(int argc, char* argv[])
   {
       RUN_ALL_TESTS(argc, argv);
@@ -44,7 +44,7 @@ Without macros
 ```cpp
 // Test class definition
 // example file: myclass.test.cpp
-  class MyTestClass final : public Fox::AutomatedTestInstance {
+  class MyTestClass final : public bitter::AutomatedTestInstance {
      public:
           virtual void Define() override;
      protected:
@@ -53,7 +53,7 @@ Without macros
   };
 
   //Register class statically or add it manually in the main.test.cpp but not both
-  static Fox::TestInserter<MyTestClass> RegisterMyTestClass("MyTestClass");
+  static bitter::TestInserter<MyTestClass> RegisterMyTestClass("MyTestClass");
 
   void MyTestClass::Define()
   {
@@ -69,7 +69,7 @@ Without macros
   #include "foxtest.h"
 
   int main(int argc, char* argv[]) {
-     Fox::AutomationTester engineTester;
+     bitter::AutomationTester engineTester;
      engineTester.AddTest<MyTestClass>("MyTestClass");
      engineTester.AddTest<MyOtherTestClass>("MyOtherTestClass");
 

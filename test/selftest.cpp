@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "../foxtest.h"
+#include "../bitter.h"
 
 #include <cassert>
 #include <limits>
 #include <algorithm>
-
+#include <iostream>
 
 
 void MultipleTestsShouldExecute()
@@ -27,7 +27,7 @@ void MultipleTestsShouldExecute()
 	static signed int counterA{};
 	static signed int counterB{};
 
-	class TestA final : public Fox::AutomatedTestInstance {
+	class TestA final : public bitter::AutomatedTestInstance {
 	public:
 		virtual void Define() override {
 			//Define our test cases
@@ -37,7 +37,7 @@ void MultipleTestsShouldExecute()
 		}
 	};
 
-	class TestB final : public Fox::AutomatedTestInstance {
+	class TestB final : public bitter::AutomatedTestInstance {
 	public:
 		virtual void Define() override {
 			//Define our test cases
@@ -47,7 +47,7 @@ void MultipleTestsShouldExecute()
 		}
 	};
 
-	Fox::AutomationTester tester;
+	bitter::AutomationTester tester;
 	tester.AddTest<TestA>("TestA");
 	tester.AddTest<TestB>("TestB");
 
@@ -61,7 +61,7 @@ void MultipleTestsShouldExecute()
 
 void MultipleTestsShouldAllSucced()
 {
-	class TestA final : public Fox::AutomatedTestInstance {
+	class TestA final : public bitter::AutomatedTestInstance {
 	public:
 		virtual void Define() override {
 			//Define our test cases
@@ -76,7 +76,7 @@ void MultipleTestsShouldAllSucced()
 		}
 	};
 
-	Fox::AutomationTester tester;
+	bitter::AutomationTester tester;
 	tester.AddTest<TestA>("A");
 	tester.AddTest<TestA>("B");
 	tester.AddTest<TestA>("C");
@@ -86,7 +86,7 @@ void MultipleTestsShouldAllSucced()
 
 void MultipleTestsShouldSuccedButOneShouldFail()
 {
-	class TestA final : public Fox::AutomatedTestInstance {
+	class TestA final : public bitter::AutomatedTestInstance {
 	public:
 		virtual void Define() override {
 			//Define our test cases
@@ -96,7 +96,7 @@ void MultipleTestsShouldSuccedButOneShouldFail()
 		}
 	};
 
-	class TestFailing final : public Fox::AutomatedTestInstance {
+	class TestFailing final : public bitter::AutomatedTestInstance {
 	public:
 		virtual void Define() override {
 			//Define our test cases
@@ -106,7 +106,7 @@ void MultipleTestsShouldSuccedButOneShouldFail()
 		}
 	};
 
-	Fox::AutomationTester tester;
+	bitter::AutomationTester tester;
 	tester.AddTest<TestA>("A");
 	tester.AddTest<TestFailing>("TestFailing");
 	tester.AddTest<TestA>("C");
@@ -116,7 +116,7 @@ void MultipleTestsShouldSuccedButOneShouldFail()
 
 void InstanceShouldReturnCorrectValues()
 {
-	class Instance final : public Fox::AutomatedTestInstance {
+	class Instance final : public bitter::AutomatedTestInstance {
 	public:
 		virtual void Define() override {}
 	};
@@ -143,7 +143,7 @@ void InstanceShouldReturnCorrectValues()
 
 void InstanceShouldListAllTestNames()
 {
-	class Instance final : public Fox::AutomatedTestInstance {
+	class Instance final : public bitter::AutomatedTestInstance {
 	public:
 		virtual void Define() override {
 			TestCase("A", []() {});
@@ -163,7 +163,7 @@ void InstanceShouldListAllTestNames()
 
 void InstanceShouldRunTestByNames()
 {
-	class Instance final : public Fox::AutomatedTestInstance {
+	class Instance final : public bitter::AutomatedTestInstance {
 	public:
 		virtual void Define() override {
 			TestCase("A", [this]() {TEST_TRUE(true); });
@@ -189,5 +189,6 @@ int main(int argc, char* argv[])
 	InstanceShouldListAllTestNames();
 	InstanceShouldRunTestByNames();
 
+    std::cout << "All self tests passed" << std::endl;
 	return 0;
 };
