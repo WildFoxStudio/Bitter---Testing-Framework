@@ -1,5 +1,18 @@
-// Copyright (c) 2022-2023 WildFox Studio - Kirichenko Stanislav. All rights reserved.
+// Copyright 2022-2023 WildFox Studio - Kirichenko Stanislav
 // No warranty implied. Use it at your own risk
+
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // USAGE with macros
 
@@ -88,373 +101,366 @@
 
 namespace Fox
 {
-inline bool
-__floatsAlmostSame(float a, float b, float epsilon = std::numeric_limits<float>().epsilon())
-{
-    return (std::fabs(a - b) < epsilon);
-}
+	inline bool
+		__floatsAlmostSame(float a, float b, float epsilon = std::numeric_limits<float>().epsilon())
+	{
+		return (std::fabs(a - b) < epsilon);
+	}
 
-inline bool
-__doublesAlmostSame(double a, double b, double epsilon = std::numeric_limits<double>().epsilon())
-{
-    return (std::abs(a - b) < epsilon);
-}
+	inline bool
+		__doublesAlmostSame(double a, double b, double epsilon = std::numeric_limits<double>().epsilon())
+	{
+		return (std::abs(a - b) < epsilon);
+	}
 
-/*Defines the current status of a given test case*/
-enum class ETestStatus
-{
-    NOT_TESTED,
-    PASSED,
-    FAILED
-};
+	/*Defines the current status of a given test case*/
+	enum class ETestStatus
+	{
+		NOT_TESTED,
+		PASSED,
+		FAILED
+	};
 
-/*Wraps a functions the will execute a test case*/
-struct DTestCase
-{
-  public:
-    DTestCase(const std::string& name, std::function<void(void)> testFunction) : Name(name.c_str()), Func(testFunction){};
-    inline void               DoWork() const { Func(); };
-    std::string               Name;
-    std::function<void(void)> Func;
-};
+	/*Wraps a functions the will execute a test case*/
+	struct DTestCase
+	{
+	public:
+		DTestCase(const std::string& name, std::function<void(void)> testFunction) : Name(name.c_str()), Func(testFunction) {};
+		inline void               DoWork() const { Func(); };
+		std::string               Name;
+		std::function<void(void)> Func;
+	};
 
-/*This is the class responsible of defining a group of test cases*/
-class AutomatedTestInstance
-{
-  public:
-    AutomatedTestInstance() = default;
+	/*This is the class responsible of defining a group of test cases*/
+	class AutomatedTestInstance
+	{
+	public:
+		AutomatedTestInstance() = default;
+		virtual ~AutomatedTestInstance() = default;
 
-    /*Resets it's internal state*/
-    inline void ResetFlags()
-    {
-        _failed             = false;
-        _currentRunningTest = -1;
-    };
+		/*Resets it's internal state*/
+		inline void ResetFlags()
+		{
+			_failed = false;
+			_currentRunningTest = -1;
+		};
 
-    /*Overidde this function to define the test cases*/
-    virtual void Define() = 0;
+		/*Overidde this function to define the test cases*/
+		virtual void Define() = 0;
 
-    /*If expression == false it will make the test fail*/
-    inline bool TestTrue(bool expression)
-    {
-        if (!expression)
-            {
-                _failed = true;
-            }
-        return expression;
-    };
+		/*If expression == false it will make the test fail*/
+		inline bool TestTrue(bool expression)
+		{
+			if (!expression)
+			{
+				_failed = true;
+			}
+			return expression;
+		};
 
-    /*If expression == true it will make the test fail*/
-    inline bool TestFalse(bool expression)
-    {
-        if (expression)
-            {
-                _failed = true;
-            }
-        return !expression;
-    };
+		/*If expression == true it will make the test fail*/
+		inline bool TestFalse(bool expression)
+		{
+			if (expression)
+			{
+				_failed = true;
+			}
+			return !expression;
+		};
 
-    /*Compare two values and return true if they are equal, if not the test will fail*/
-    bool TestEqual(char value, char expected)
-    {
-        if (!(value == expected))
-            {
-                _failed = true;
-                assert(false);
-                return false;
-            }
-        return true;
-    };
+		/*Compare two values and return true if they are equal, if not the test will fail*/
+		bool TestEqual(char value, char expected)
+		{
+			if (!(value == expected))
+			{
+				_failed = true;
+				return false;
+			}
+			return true;
+		};
 
-    bool TestEqual(unsigned char value, unsigned char expected)
-    {
-        if (!(value == expected))
-            {
-                _failed = true;
-                assert(false);
-                return false;
-            }
-        return true;
-    };
+		bool TestEqual(unsigned char value, unsigned char expected)
+		{
+			if (!(value == expected))
+			{
+				_failed = true;
+				return false;
+			}
+			return true;
+		};
 
-    /*Compare two values and return true if they are equal, if not the test will fail*/
-    bool TestEqual(int value, int expected)
-    {
-        if (!(value == expected))
-            {
-                _failed = true;
-                assert(false);
-                return false;
-            }
-        return true;
-    };
+		/*Compare two values and return true if they are equal, if not the test will fail*/
+		bool TestEqual(int value, int expected)
+		{
+			if (!(value == expected))
+			{
+				_failed = true;
+				return false;
+			}
+			return true;
+		};
 
-    /*Compare two values and return true if they are equal, if not the test will fail*/
-    bool TestEqual(unsigned int value, unsigned int expected)
-    {
-        if (!(value == expected))
-            {
-                _failed = true;
-                assert(false);
-                return false;
-            }
-        return true;
-    };
+		/*Compare two values and return true if they are equal, if not the test will fail*/
+		bool TestEqual(unsigned int value, unsigned int expected)
+		{
+			if (!(value == expected))
+			{
+				_failed = true;
+				return false;
+			}
+			return true;
+		};
 
-    /*Compare two values and return true if they are equal, if not the test will fail*/
-    bool TestEqual(float value, float expected)
-    {
-        if (!__floatsAlmostSame(value, expected))
-            {
-                std::cerr << "In:" << GetTestNames()[GetCurrentRunningTest()] << TEXT_RED << ENDLINE << "Expected value to be " << expected << " but it was " << value << ENDLINE << ENDLINE;
+		/*Compare two values and return true if they are equal, if not the test will fail*/
+		bool TestEqual(float value, float expected)
+		{
+			if (!__floatsAlmostSame(value, expected))
+			{
+				_failed = true;
+				return false;
+			}
+			return true;
+		};
 
-                _failed = true;
-                assert(false);
-                return false;
-            }
-        return true;
-    };
+		/*Compare two values and return true if they are equal, if not the test will fail*/
+		bool TestEqual(double value, double expected)
+		{
+			if (!__doublesAlmostSame(value, expected))
+			{
+				_failed = true;
+				return false;
+			}
+			return true;
+		};
 
-    /*Compare two values and return true if they are equal, if not the test will fail*/
-    bool TestEqual(double value, double expected)
-    {
-        if (!__floatsAlmostSame(value, expected))
-            {
-                std::cerr << "In:" << GetTestNames()[GetCurrentRunningTest()] << TEXT_RED << ENDLINE << "Expected value to be " << expected << " but it was " << value << ENDLINE << ENDLINE;
+		/*Return a vector of test names*/
+		inline std::vector<std::string> GetTestNames() const
+		{
+			std::vector<std::string> names;
+			names.reserve(_tests.size());
+			std::transform(_tests.begin(), _tests.end(), std::back_inserter(names), [](const DTestCase& test) { return test.Name; });
+			return names;
+		};
 
-                _failed = true;
-                assert(false);
-                return false;
-            }
-        return true;
-    };
+		/*Will run a particular test case by it's name*/
+		inline bool RunTest(const std::string& name)
+		{
+			ResetFlags();
+			auto found = std::find_if(_tests.begin(), _tests.end(), [name](const DTestCase& test) { return test.Name == name; });
+			assert(found != _tests.end());
+			_currentRunningTest = static_cast<signed int>(std::distance(_tests.begin(), found));
+			try
+			{
+				found->DoWork();
+				_testStatus[_currentRunningTest] = _failed ? ETestStatus::FAILED : ETestStatus::PASSED;
+			}
+			catch (...)
+			{
+				_testStatus[_currentRunningTest] = ETestStatus::FAILED;
+			}
+			return !_failed;
+		}
 
-    /*Return a vector of test names*/
-    inline std::vector<std::string> GetTestNames() const
-    {
-        std::vector<std::string> names;
-        names.reserve(_tests.size());
-        std::transform(_tests.begin(), _tests.end(), std::back_inserter(names), [](const DTestCase& test) { return test.Name; });
-        return names;
-    };
+		/*Run all tests, return true if they all passed, false otherwise*/
+		inline bool RunAll()
+		{
+			unsigned int passed{};
+			for (int i = 0; i < _tests.size(); i++)
+			{
+				ResetFlags();
+				const auto& test = _tests[i];
+				try
+				{
+					passed += static_cast<unsigned int>(RunTest(test.Name));
+				}
+				catch (...)
+				{
+				}
+			}
 
-    /*Will run a particular test case by it's name*/
-    inline bool RunTest(const std::string& name)
-    {
-        ResetFlags();
-        auto found = std::find_if(_tests.begin(), _tests.end(), [name](const DTestCase& test) { return test.Name == name; });
-        assert(found != _tests.end());
-        _currentRunningTest = static_cast<signed int>(std::distance(_tests.begin(), found));
-        try
-            {
-                found->DoWork();
-                _testStatus[_currentRunningTest] = _failed ? ETestStatus::FAILED : ETestStatus::PASSED;
-            }
-        catch (...)
-            {
-                _testStatus[_currentRunningTest] = ETestStatus::FAILED;
-            }
-        return !_failed;
-    }
+			return (passed == _tests.size());
+		}
 
-    /*Run all tests, return true if they all passed, false otherwise*/
-    inline bool RunAll()
-    {
-        unsigned int passed{};
-        for (int i = 0; i < _tests.size(); i++)
-            {
-                ResetFlags();
-                const auto& test = _tests[i];
-                try
-                    {
-                        passed += static_cast<unsigned int>(RunTest(test.Name));
-                    }
-                catch (...)
-                    {
-                    }
-            }
+		/*Get the status of a particular test by name*/
+		inline ETestStatus GetResult(const std::string& name) const
+		{
+			for (int i = 0; i < _tests.size(); i++)
+			{
+				const auto& test = _tests[i];
+				if (test.Name == name)
+				{
+					return _testStatus[i];
+				}
+			}
+			assert(0);//Test name does not exists
+			return ETestStatus::NOT_TESTED;
+		}
 
-        return (passed == _tests.size());
-    }
+		/*Get a vector of status for all the tests*/
+		inline std::vector<ETestStatus> GetResults() const { return _testStatus; }
 
-    /*Get the status of a particular test by name*/
-    inline ETestStatus GetResult(const std::string& name) const
-    {
-        for (int i = 0; i < _tests.size(); i++)
-            {
-                const auto& test = _tests[i];
-                if (test.Name == name)
-                    {
-                        return _testStatus[i];
-                    }
-            }
-    }
+		/*Used to define a test case*/
+		inline void TestCase(const std::string& name, std::function<void(void)> testFunc)
+		{
+			// check that does not exists with same name
+			assert(std::find_if(_tests.begin(), _tests.end(), [name](const DTestCase& test) { return test.Name == name; }) == _tests.end());
+			assert(_tests.size() < std::numeric_limits<signed int>().max());
+			try
+			{
+				_tests.push_back(DTestCase(name, std::move(testFunc)));
+				_testStatus.push_back(ETestStatus::NOT_TESTED);
+			}
+			catch (...)
+			{
+				assert(0); // Failed to allocate test case
+			}
+		};
 
-    /*Get a vector of status for all the tests*/
-    inline std::vector<ETestStatus> GetResults() const { return _testStatus; }
+		/*Returns the index of the current running test. Returns -1 if no tests are running*/
+		inline signed int GetCurrentRunningTest() const { return _currentRunningTest; };
 
-    /*Used to define a test case*/
-    inline void TestCase(const std::string& name, std::function<void(void)> testFunc)
-    {
-        // check that does not exists with same name
-        assert(std::find_if(_tests.begin(), _tests.end(), [name](const DTestCase& test) { return test.Name == name; }) == _tests.end());
-        assert(_tests.size() < std::numeric_limits<signed int>().max());
-        try
-            {
-                _tests.push_back(DTestCase(name, std::move(testFunc)));
-                _testStatus.push_back(ETestStatus::NOT_TESTED);
-            }
-        catch (...)
-            {
-                assert(0); // Failed to allocate test case
-            }
-    };
+		inline std::string        GetLog() const { return _log.str(); };
+		inline void               ResetLog() { _log.clear(); };
+		inline std::stringstream& OutLog() { return _log; };
 
-    /*Returns the index of the current running test. Returns -1 if no tests are running*/
-    inline signed int GetCurrentRunningTest() const { return _currentRunningTest; };
+	private:
+		std::vector<DTestCase>   _tests;
+		std::vector<ETestStatus> _testStatus;
+		bool                     _failed{};
+		std::stringstream        _log;
+		signed int               _currentRunningTest = -1;
+	};
 
-    inline std::string        GetLog() const { return _log.str(); };
-    inline void               ResetLog() { _log.clear(); };
-    inline std::stringstream& OutLog() { return _log; };
+	class AutomationTester
+	{
+	public:
+		AutomationTester() = default;
 
-  private:
-    std::vector<DTestCase>   _tests;
-    std::vector<ETestStatus> _testStatus;
-    bool                     _failed{};
-    std::stringstream        _log;
-    signed int               _currentRunningTest = -1;
-};
+		// Define it as a singleton
+		inline static AutomationTester& GetInstance()
+		{
+			static AutomationTester tester;
+			return tester;
+		};
 
-class AutomationTester
-{
-  public:
-    AutomationTester() = default;
+		template<class T>
+		void AddTest(const std::string& testName)
+		{
+			_tests[testName] = []() -> AutomatedTestInstance* { return new T; };
+		};
 
-    // Define it as a singleton
-    inline static AutomationTester& GetInstance()
-    {
-        static AutomationTester tester;
-        return tester;
-    };
+		bool RunAllTests(int argc = 0, char* argv[] = nullptr)
+		{
+			SetupOutstream(argc, argv);
 
-    template<class T>
-    void AddTest(const std::string& testName)
-    {
-        _tests[testName] = [this]() -> AutomatedTestInstance* { return new T; };
-    };
+			unsigned int testPassed{};
+			for (const auto& newTest : _tests)
+			{
 
-    bool RunAllTests(int argc, char* argv[])
-    {
-        SetupOutstream(argc, argv);
+				GetOutstream() << TEXT_WHITE << ENDLINE << "Begin testing:" << newTest.first << ENDLINE;
+				GetOutstream().flush();
 
-        unsigned int testPassed{};
-        for (const auto& newTest : _tests)
-            {
+				AutomatedTestInstance* testInstance = newTest.second();
+				testInstance->Define();
+				unsigned int subTestNumPassed = 0;
+				for (const auto& n : testInstance->GetTestNames())
+				{
+					GetOutstream() << TEXT_WHITE << "Running:" << n << ENDLINE;
+					GetOutstream().flush();
+					// Run the test
+					const bool result = testInstance->RunTest(n);
+					OutResult(result);
+					GetOutstream() << ENDLINE;
+					GetOutstream().flush();
+					// Increment counter
+					subTestNumPassed += static_cast<unsigned int>(result);
+				}
+				GetOutstream() << TEXT_RED << testInstance->GetLog() << ENDLINE;
+				GetOutstream() << TEXT_GREEN << "Result completed tests [" << subTestNumPassed << "/" << testInstance->GetTestNames().size() << "]" << ENDLINE;
 
-                GetOutstream() << TEXT_WHITE << ENDLINE << "Begin testing:" << newTest.first << ENDLINE;
-                GetOutstream().flush();
+				GetOutstream() << TEXT_WHITE << newTest.first << " Completed with result" << ENDLINE;
+				OutResult((subTestNumPassed == testInstance->GetTestNames().size()));
+				testPassed += (static_cast<unsigned int>(subTestNumPassed == testInstance->GetTestNames().size()));
 
-                AutomatedTestInstance* testInstance = newTest.second();
-                testInstance->Define();
-                unsigned int subTestNumPassed = 0;
-                for (const auto& n : testInstance->GetTestNames())
-                    {
-                        GetOutstream() << TEXT_WHITE << "Running:" << n << ENDLINE;
-                        GetOutstream().flush();
-                        // Run the test
-                        const bool result = testInstance->RunTest(n);
-                        OutResult(result);
-                        GetOutstream() << ENDLINE;
-                        GetOutstream().flush();
-                        // Increment counter
-                        subTestNumPassed += static_cast<unsigned int>(result);
-                    }
-                GetOutstream() << TEXT_RED << testInstance->GetLog() << ENDLINE;
-                GetOutstream() << TEXT_GREEN << "Result completed tests [" << subTestNumPassed << "/" << testInstance->GetTestNames().size() << "]" << ENDLINE;
+				GetOutstream() << ENDLINE << ENDLINE;
+				GetOutstream().flush();
+				delete testInstance;
+			}
 
-                GetOutstream() << TEXT_WHITE << newTest.first << " Completed with result" << ENDLINE;
-                OutResult((subTestNumPassed == testInstance->GetTestNames().size()));
-                testPassed += (static_cast<unsigned int>(subTestNumPassed == testInstance->GetTestNames().size()));
+			GetOutstream() << TEXT_WHITE << "Testing ended with result" << ENDLINE;
+			OutResult(testPassed == _tests.size());
+			GetOutstream() << ENDLINE;
 
-                GetOutstream() << ENDLINE << ENDLINE;
-                GetOutstream().flush();
-                delete testInstance;
-            }
+			GetOutstream() << TEXT_WHITE;
+			EndOutputStream();
 
-        GetOutstream() << TEXT_WHITE << "Testing ended with result" << ENDLINE;
-        OutResult(testPassed == _tests.size());
-        GetOutstream() << ENDLINE;
+			return (testPassed == _tests.size());
+		};
 
-        GetOutstream() << TEXT_WHITE;
-        EndOutputStream();
+		inline std::ostream& GetOutstream()
+		{
+			if (_outstream.is_open())
+			{
+				return _outstream;
+			}
 
-        return (testPassed == _tests.size());
-    };
+			return std::cerr;
+		};
 
-    inline std::ostream& GetOutstream()
-    {
-        if (_outstream.is_open())
-            {
-                return _outstream;
-            }
+	private:
+		static constexpr unsigned int _resultOffset = 60;
+		std::ofstream                 _outstream;
 
-        return std::cerr;
-    };
+		inline void SetupOutstream(int argc, char* argv[])
+		{
+			if (argc > 1)
+			{
+				_outstream.open(argv[1]);
+				if (_outstream.is_open())
+				{
+					std::cerr << "Writing to file:" << argv[1];
+				}
+				else
+				{
+					std::cerr << "Could not create log with filename:" << argv[1];
+				}
+			}
+		};
 
-  private:
-    static constexpr unsigned int _resultOffset = 60;
-    std::ofstream                 _outstream;
+		inline void EndOutputStream()
+		{
+			GetOutstream().flush();
+			if (_outstream.is_open())
+			{
+				_outstream.close();
+			}
+		};
 
-    inline void SetupOutstream(int argc, char* argv[])
-    {
-        if (argc > 1)
-            {
-                _outstream.open(argv[1]);
-                if (_outstream.is_open())
-                    {
-                        std::cerr << "Writing to file:" << argv[1];
-                    }
-                else
-                    {
-                        std::cerr << "Could not create log with filename:" << argv[1];
-                    }
-            }
-    };
+		inline void OutSuccess() { GetOutstream() << std::setfill('-') << std::setw(_resultOffset) << "[" << TEXT_GREEN << "PASSED" << TEXT_WHITE << "]"; };
+		inline void OutFailure() { GetOutstream() << std::setfill('-') << std::setw(_resultOffset) << "[" << TEXT_RED << "FAILED" << TEXT_WHITE << "]"; };
 
-    inline void EndOutputStream()
-    {
-        GetOutstream().flush();
-        if (_outstream.is_open())
-            {
-                _outstream.close();
-            }
-    };
+		inline void OutResult(bool result)
+		{
+			if (result)
+			{
+				GetOutstream() << std::setfill('-') << std::setw(_resultOffset) << "[" << TEXT_GREEN << "PASSED" << TEXT_WHITE << "]";
+			}
+			else
+			{
+				GetOutstream() << std::setfill('-') << std::setw(_resultOffset) << "[" << TEXT_RED << "FAILED" << TEXT_WHITE << "]";
+			}
+		};
 
-    inline void OutSuccess() { GetOutstream() << std::setfill('-') << std::setw(_resultOffset) << "[" << TEXT_GREEN << "PASSED" << TEXT_WHITE << "]"; };
-    inline void OutFailure() { GetOutstream() << std::setfill('-') << std::setw(_resultOffset) << "[" << TEXT_RED << "FAILED" << TEXT_WHITE << "]"; };
+	private:
+		std::map<std::string, std::function<AutomatedTestInstance* (void)>> _tests;
+	};
 
-    inline void OutResult(bool result)
-    {
-        if (result)
-            {
-                GetOutstream() << std::setfill('-') << std::setw(_resultOffset) << "[" << TEXT_GREEN << "PASSED" << TEXT_WHITE << "]";
-            }
-        else
-            {
-                GetOutstream() << std::setfill('-') << std::setw(_resultOffset) << "[" << TEXT_RED << "FAILED" << TEXT_WHITE << "]";
-            }
-    };
-
-  private:
-    std::map<std::string, std::function<AutomatedTestInstance*(void)>> _tests;
-};
-
-template<class T>
-class TestInserter
-{
-  public:
-    TestInserter(const std::string& className) { Fox::AutomationTester::GetInstance().AddTest<T>(className); };
-};
+	template<class T>
+	class TestInserter
+	{
+	public:
+		TestInserter(const std::string& className) { Fox::AutomationTester::GetInstance().AddTest<T>(className); };
+	};
 
 } // namespace Fox
 
@@ -504,7 +510,7 @@ class TestInserter
 
 #define TEST_EQUAL(a, b) \
     { \
-if (!TestEqual((a), (b))\
+if (!TestEqual((a), (b)))\
         {\
                 std::cerr << "In:" << GetTestNames()[GetCurrentRunningTest()] << "[line " << __LINE__ << "]" \
                           << " TEST_EQUAL(" << #a << "," << #b << ")" \
@@ -514,7 +520,7 @@ if (!TestEqual((a), (b))\
 
 #define TEST_NEQUAL(a, b) \
     { \
-if (TestEqual((a), (b))\
+if (TestEqual((a), (b)))\
         {\
                 std::cerr << "In:" << GetTestNames()[GetCurrentRunningTest()] << "[line " << __LINE__ << "]" \
                           << " TEST_NEQUAL(" << #a << "," << #b << ")" \
