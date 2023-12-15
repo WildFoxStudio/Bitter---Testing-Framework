@@ -459,15 +459,15 @@ namespace bitter
 	class TestInserter
 	{
 	public:
-		TestInserter(const std::string& className) { bitterAutomationTester::GetInstance().AddTest<T>(className); };
+		TestInserter(const std::string& className) { AutomationTester::GetInstance().AddTest<T>(className); };
 	};
 
 } // namespace Fox
 
-#define ADD_TEST(testClass) static bitterTestInserter<testClass> __testInserted##testClass(#testClass);
+#define ADD_TEST(testClass) static bitter::TestInserter<testClass> __testInserted##testClass(#testClass);
 
 #define TEST_DEFINE_CLASS(className) \
-    class className final : public AutomatedTestInstance \
+    class className final : public bitter::AutomatedTestInstance \
     { \
       public: \
         void Define() override;
@@ -475,7 +475,7 @@ namespace bitter
 #define TEST_END_CLASS(className) \
     } \
     ; \
-    static bitterTestInserter<className> __testInserted##className(#className);
+    static bitter::TestInserter<className> __testInserted##className(#className);
 
 #define TEST_TRUE_OR_QUIT(expression) \
     { \
@@ -510,22 +510,22 @@ namespace bitter
 
 #define TEST_EQUAL(a, b) \
     { \
-if (!TestEqual((a), (b)))\
-        {\
-                std::cerr << "In:" << GetTestNames()[GetCurrentRunningTest()] << "[line " << __LINE__ << "]" \
-                          << " TEST_EQUAL(" << #a << "," << #b << ")" \
-                          << " was expected to be equal but they are not" << ENDLINE; \
-        } \
+		if (!TestEqual((a), (b)))\
+			{\
+					std::cerr << "In:" << GetTestNames()[GetCurrentRunningTest()] << "[line " << __LINE__ << "]" \
+							<< " TEST_EQUAL(" << #a << "," << #b << ")" \
+							<< " was expected to be equal but they are not" << ENDLINE; \
+			} \
     }
 
 #define TEST_NEQUAL(a, b) \
     { \
-if (TestEqual((a), (b)))\
-        {\
-                std::cerr << "In:" << GetTestNames()[GetCurrentRunningTest()] << "[line " << __LINE__ << "]" \
-                          << " TEST_NEQUAL(" << #a << "," << #b << ")" \
-                          << " was expected to be different but they are the same" << ENDLINE; \
-        } \
+		if (TestEqual((a), (b)))\
+			{\
+					std::cerr << "In:" << GetTestNames()[GetCurrentRunningTest()] << "[line " << __LINE__ << "]" \
+							<< " TEST_NEQUAL(" << #a << "," << #b << ")" \
+							<< " was expected to be different but they are the same" << ENDLINE; \
+			} \
     }
 
 // Returns 0  when all tests succed or 1 when at least one test has failed
